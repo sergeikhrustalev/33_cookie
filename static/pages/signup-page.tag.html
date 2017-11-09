@@ -59,18 +59,24 @@
         if (response.status==200){
           window.go2page('/')
         } else if (response.status==400){
-            return response.text()
+            return response.json()
         } else if (response.status==500){
           riotTag.errorMsg = 'Упс, что-то пошло не так. Ошибка на сервере'
           riotTag.update()
         }
-      }).then(function(json) {
-          riotTag.errorMsg = json
-          riotTag.update()
       }).catch(function(error) {
         riotTag.errorMsg = 'Упс, что-то пошло не так'
         console.error(error)
         riotTag.update()
+      }).then(function(jsonData) {
+          if (jsonData.errors){
+            riotTag.errorMsg = 'Errors : '
+            for(var errorCount in jsonData.errors){
+              error = jsonData.errors[errorCount]
+              riotTag.errorMsg += '\'' + error.explanation + '\'' + ' '
+            }
+            riotTag.update()
+          }
       })
     }
   </script>
